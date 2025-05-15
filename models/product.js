@@ -52,24 +52,30 @@ const mongodb=require('mongodb');
 const getDb=require('../util/database').getDb;
 
 class Product{
-    constructor(title,price,description,imageUrl){
+    constructor(title,price,description,imageUrl,id){
         this.title=title;
         this.price=price;
         this.description=description;
         this.imageUrl=imageUrl;
+        this._id=id;
     }
     save(){
-        
-        const db=getDb();
-        return db.collection('products').insertOne(this)
-        .then((result)=>{
-            console.log('success');
-            // console.log(result);
-        })
-        .catch((error)=>{
-            console.log('error');
-            // console.log(error);
-        });
+        if(this._id){
+            //update product
+        }
+        else{
+            const db=getDb();
+                    return db.collection('products').insertOne(this)
+                    .then((result)=>{
+                        console.log('success');
+                        // console.log(result);
+                    })
+                    .catch((error)=>{
+                        console.log('error');
+                        // console.log(error);
+                    });
+        }
+      
       
     }
     static fetchAll(){
