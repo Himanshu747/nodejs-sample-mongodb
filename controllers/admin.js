@@ -2,6 +2,7 @@
 
 const Product = require("../models/product");
 
+
 exports.getAddProduct = (req,res,next) => {
    
     res.render('admin/edit-product',{
@@ -16,9 +17,11 @@ exports.postAddProduct= (req,res,next)=>{
       const imageUrl=req.body.imageUrl;
       const description=req.body.description;
       const price=req.body.price;
-      const product=new Product(title,price,description,imageUrl);
+      
+      const product=new Product(title,price,description,imageUrl,null,req.user._id);
       product.save().then(result=>{
-            console.log(result);
+         //   console.log(result);
+        // product.save();
             console.log('created product');
             res.redirect("/admin/products");
       })
@@ -58,7 +61,7 @@ exports.getEditProduct = (req,res,next) => {
       // req.user.getProducts({where:{id:prodId}})
       // .then(products=>{
      Product.findByPk(prodId).then(products=>{
-      console.log(products);
+   
       const product=products;
             if(!product){
                   return res.redirect("/");
@@ -83,8 +86,16 @@ exports.postEditProduct =(req,res,next)=>{
       const updatedPrice=req.body.price;
       const updatedImageUrl=req.body.imageUrl;
       const updatedDesc=req.body.description;
-      const product=new Product(updatedTitle,updatedPrice,updatedDesc,updatedImageUrl);
-     // Product.findByPk(prodId)
+      const product=new Product(updatedTitle,updatedPrice,updatedDesc,updatedImageUrl,prodId);
+      product.save().then(result=>{
+            console.log('Updated Product Successfully');
+            res.redirect('/admin/products');
+      })
+      .catch(error=>{
+            console.log('error is calling');
+            console.log(error);
+      });
+    
       // .then(product=>{
       //       product.title=updatedTitle;
       //       product.price=updatedPrice;
@@ -121,17 +132,19 @@ exports.getProducts=(req,res,next)=>{
 
 exports.postDeleteProduct=(req,res,next)=>{
       const prodId=req.body.productId;
-      //Product.deleteById(prodId);
+      Product.deleteById(prodId)
+      .then(()=>{
+            console.log('Products Delete successfully');
+            res.redirect("/admin/products");
+      })
+      .catch(error=>{
+            console.log(error);
+      });
+
       // Product.findByPk(prodId)
       // .then(product=>{
       //       return product.destroy();
       // })
-      // .then(result=>{
-      //       console.log('Products Delete successfully');
-      //       res.redirect("/admin/products");
-      // })
-      // .catch(error=>{
-      //       console.log(error);
-      // });
+      
      
 }
